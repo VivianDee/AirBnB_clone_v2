@@ -3,6 +3,7 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
+import os
 
 
 class State(BaseModel, Base):
@@ -13,19 +14,19 @@ class State(BaseModel, Base):
         name = ""
     else:
         name = Column(String(128), nullable=False)
-        cities = relationship('City', cascade='all, delete-orphan', back_ref="state")
+        cities = relationship('City', cascade='all, delete-orphan', backref="state")
 
     @property
     def cities(self):
-    """Returns the list of City instances with state_id"""
-    import models
-    objs = models.storage.all("City")
-    city = []
+        """Returns the list of City instances with state_id"""
+        import models
+        objs = models.storage.all("City")
+        city = []
 
-    for obj in objs.values():
-        try:
-            if obj.state_id == self.id:
-                city.append(obj)
-        except Exception:
-            pass
-    return city
+        for obj in objs.values():
+            try:
+                if obj.state_id == self.id:
+                    city.append(obj)
+            except Exception:
+                pass
+        return city

@@ -115,16 +115,38 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
+        param = []
+        if (len(args.split(' ')) > 1):
+            arg = args.partition("=")
+            name = arg[0].split(' ')[0]
+            arg = args.split(' ')
+            arg.pop(0)
+            param = arg
+            args = name
         if not args:
             print("** class name missing **")
             return
         elif args not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
-        print(new_instance.id)
-        storage.save()
+        if not param:
+            new_instance = HBNBCommand.classes[args]()
+            storage.save()
+            print(new_instance.id)
+            storage.save()
+        else:
+            new_instance = HBNBCommand.classes[args]()
+            storage.save()
+            length = len(param)
+            idx = 0
+            while length > 0:
+                focus_args = param[idx].split('=')
+                idx = idx + 1
+                length = length - 1
+                self.update(focus_args[0], focus_args[1], name, new_instance.id)
+            print(new_instance.id)
+            storage.save()
+                
 
     def help_create(self):
         """ Help information for the create method """
@@ -232,6 +254,13 @@ class HBNBCommand(cmd.Cmd):
         """ """
         print("Usage: count <class_name>")
 
+    def update(self, arg1, arg2, name, my_id):
+        """Update an instance based on its id"""
+        arg = arg1
+        i = arg2.strip('"')
+        arg = ' '.join([name, my_id, str(arg), i])
+        self.do_update(arg)
+
     def do_update(self, args):
         """ Updates a certain object with new info """
         c_name = c_id = att_name = att_val = kwargs = ''
@@ -307,6 +336,13 @@ class HBNBCommand(cmd.Cmd):
                     print("** value missing **")
                     return
                 # type cast as necessary
+                try:
+                    if '.' in att_val:
+                        att_val = float(att_val)
+                    else: 
+                        att_val = int(att_val)
+                except Exception:
+                    pass
                 if att_name in HBNBCommand.types:
                     att_val = HBNBCommand.types[att_name](att_val)
 

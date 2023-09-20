@@ -2,8 +2,8 @@
 """ Console Module """
 import cmd
 import sys
-from models.__init__ import storage
 from models.base_model import BaseModel
+from models.__init__ import storage
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -33,7 +33,7 @@ class HBNBCommand(cmd.Cmd):
     def preloop(self):
         """Prints if isatty is false"""
         if not sys.__stdin__.isatty():
-            print('(hbnb) ', end="")
+            print('(hbnb)')
 
     def precmd(self, line):
         """Reformat command line for advanced command syntax.
@@ -116,33 +116,22 @@ class HBNBCommand(cmd.Cmd):
         """ Create an object of any class"""
         try:
             if not args:
-                raise SyntaxError("** class name missing **")
-
+                raise SyntaxError()
             arg_list = args.split(" ")
-            class_name = arg_list[0]
-            if class_name not in HBNBCommand.classes:
-                raise NameError("** class doesn't exist **")
-
-            kwargs = {}
+            kw = {}
             for arg in arg_list[1:]:
                 arg_splited = arg.split("=")
-                arg_key = arg_splited[0]
-                arg_value = eval(arg_splited[1])
-
-                if isinstance(arg_value, str):
-                    arg_value = arg_value.replace("_", " ").replace('"', '\\"')
-
-                kwargs[arg_key] = arg_value
-
-            new_instance = HBNBCommand.classes[class_name](**kwargs)
-            new_instance.save()
-            print(new_instance.id)
-
-        except SyntaxError as e:
-            print(str(e))
-
-        except NameError as e:
-            print(str(e))
+                arg_splited[1] = eval(arg_splited[1])
+                if type(arg_splited[1]) is str:
+                    arg_splited[1] = arg_splited[1].replace("_", " ").replace('"', '\\"')
+                kw[arg_splited[0]] = arg_splited[1]
+        except SyntaxError:
+            print("** class name missing **")
+        except NameError:
+            print("** class doesn't exist **")
+        new_instance = HBNBCommand.classes[arg_list[0]](**kw)
+        new_instance.save()
+        print(new_instance.id)
 
     def help_create(self):
         """ Help information for the create method """
@@ -248,13 +237,6 @@ class HBNBCommand(cmd.Cmd):
         """ """
         print("Usage: count <class_name>")
 
-    def update(self, arg1, arg2, name, my_id):
-        """Update an instance based on its id"""
-        arg = arg1
-        i = arg2.strip('"')
-        arg = ' '.join([name, my_id, str(arg), i])
-        self.do_update(arg)
-
     def do_update(self, args):
         """ Updates a certain object with new info """
         c_name = c_id = att_name = att_val = kwargs = ''
@@ -330,13 +312,6 @@ class HBNBCommand(cmd.Cmd):
                     print("** value missing **")
                     return
                 # type cast as necessary
-                try:
-                    if '.' in att_val:
-                        att_val = float(att_val)
-                    else: 
-                        att_val = int(att_val)
-                except Exception:
-                    pass
                 if att_name in HBNBCommand.types:
                     att_val = HBNBCommand.types[att_name](att_val)
 
@@ -349,6 +324,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()

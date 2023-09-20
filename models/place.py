@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 
-from sqlalchemy.ext.declarative import declarative_base
 from models.base_model import BaseModel, Base
 from models.review import Review
-from models.amenity import Amenity
 from sqlalchemy import Column, Table, String, Integer, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from os import getenv
@@ -73,5 +71,6 @@ class Place(BaseModel, Base):
         @amenities.setter
         def amenities(self, obj=None):
             """Append amenity ids to the attribute """
-            if isinstance(obj, Amenity) and obj.id not in self.amenity_ids:
+            obj_cls_name = obj.to_dict().get("__class__", None)
+            if obj_cls_name == "Amenity" and obj.id not in self.amenity_ids:
                 self.amenity_ids.append(obj.id)

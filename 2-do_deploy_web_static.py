@@ -25,18 +25,20 @@ def do_deploy(archive_path):
         file_name = archive_path.split('/')[1].split('.tgz')[0]
         comp_file = "{}.tgz".format(file_name)
 
-        command = "tar -xzf /tmp/{} -C /data/web_static/releases/".format(comp_file)
+        directory = run("sudo mkdir -p /data/web_static/releases/{}".format(file_name))
+        command = "sudo tar -xzf /tmp/{} -C /data/web_static/releases/{}".format(comp_file, file_name)
         result = run(command)
 
         """Delete the archive and symlink from the web server"""
         sym_link = "/data/web_static/current"
-        check = run("rm /tmp/{}.tgz".format(file_name))
-        check2 = run("rm {}".format(sym_link))
+        check = run("sudo rm /tmp/{}.tgz".format(file_name))
+        check2 = run("sudo rm -rf {}".format(sym_link))
 
-        check3 = run("mkdir -p /data/web_static/releases/")
-        check4 = run("ln -sf /data/web_static/releases/{} {}".format(file_name, sym_link))
+        check3 = run("sudo cp -r /data/web_static/releases/{}/web_static/* /data/web_static/releases/".format(file_name))
+        check4 = run("sudo ln -sf /data/web_static/releases/{} {}".format(file_name, sym_link))
+        check5 = run("sudo service nginx restart")
 
-        if upload.failed or result.failed or check.failed or check2.failed or check3.failed or check4.failed:
+        if upload.failed or result.failed or check.failed or check2.failed or check3.failed or check4.failed or check5.failed:
             return False
         else:
             print("New version deployed!")

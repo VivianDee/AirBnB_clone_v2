@@ -23,7 +23,9 @@ def do_deploy(archive_path):
         upload = put(archive_path, '/tmp/')
 
         file_name = archive_path.split('/')[1].split('.tgz')[0]
-        command = "tar -xzf /tmp/{}.tgz -C /data/web_static/releases/{}".format(file_name, file_name)
+        comp_file = "{}.tgz".format(file_name)
+
+        command = "tar -xzf /tmp/{} -C /data/web_static/releases/".format(comp_file)
         result = run(command)
 
         """Delete the archive and symlink from the web server"""

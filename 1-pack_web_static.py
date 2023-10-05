@@ -22,6 +22,6 @@ def do_pack():
 
     compressed = local(command)
     if compressed.succeeded:
-        return compressed
+        return "versions/{}".format(archive)
     else:
         return None

@@ -16,10 +16,10 @@ env.user = "ubuntu"
 
 def do_deploy(archive_path):
     """Distributes an archive to my web servers"""
-    for i in env.hosts:
-        if not os.path.exists(archive_path):
-            return False
+    if not os.path.exists(archive_path):
+        return False
 
+    try:
         upload = put(archive_path, '/tmp/')
 
         file_name = archive_path.split('/')[1].split('.tgz')[0]
@@ -37,9 +37,8 @@ def do_deploy(archive_path):
         check3 = run("sudo cp -r /data/web_static/releases/{}/web_static/* /data/web_static/releases/".format(file_name))
         check4 = run("sudo ln -sf /data/web_static/releases/ {}".format(sym_link))
         check5 = run("sudo service nginx restart")
-
         if upload.failed or result.failed or check.failed or check2.failed or check3.failed or check4.failed or check5.failed:
             return False
-        else:
-            print("New version deployed!")
-            return True
+        return True
+    except Exception:
+        return False

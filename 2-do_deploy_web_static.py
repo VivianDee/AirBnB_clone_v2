@@ -35,7 +35,7 @@ def do_deploy(archive_path):
         check2 = run("sudo rm -rf {}".format(sym_link))
 
         check3 = run("sudo cp -r /data/web_static/releases/{}/web_static/* /data/web_static/releases/".format(file_name))
-        check4 = run("sudo ln -sf /data/web_static/releases/{} {}".format(file_name, sym_link))
+        check4 = run("sudo ln -sf /data/web_static/releases/ {}".format(sym_link))
         check5 = run("sudo service nginx restart")
 
         if upload.failed or result.failed or check.failed or check2.failed or check3.failed or check4.failed or check5.failed:

@@ -12,6 +12,7 @@ echo "<html>
   </body>
 </html>" | sudo tee "$path/index.html"
 sudo ln -sf "$path" /data/web_static/current
-sudo chown -hR ubuntu:ubuntu /data/
+my_username=$(whoami)
+sudo chown -R "$my_username":"$my_username" /data
 sudo sed -i "57i\ \tlocation /hbnb_static {\n\t\talias /data/web_static/current/;\n\t}" /etc/nginx/sites-available/default
 sudo service nginx restart

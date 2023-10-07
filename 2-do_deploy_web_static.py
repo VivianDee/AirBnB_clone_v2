@@ -33,7 +33,7 @@ def do_deploy(archive_path):
         check = run("sudo rm /tmp/{}.tgz".format(file_name))
         check2 = run("sudo rm -rf {}".format(sym_link))
 
-        check3 = run("sudo mv /data/web_static/releases/{}/web_static/* /data/web_static/releases/{}/".format(file_name, file_name))
+        check3 = run("sudo mv -nu /data/web_static/releases/{}/web_static/* /data/web_static/releases/{}/".format(file_name, file_name))
         cleanup = run ("sudo rm -rf /data/web_static/releases/{}/web_static".format(file_name))
         check4 = run("sudo ln -sf /data/web_static/releases/{}/ {}".format(file_name, sym_link))
         check5 = run("sudo service nginx restart")
@@ -49,6 +49,7 @@ def do_deploy(archive_path):
         ):
             return False
 
+        print("New version deployed!")
         return True
     except Exception:
         return False

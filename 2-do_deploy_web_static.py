@@ -11,7 +11,6 @@ import sys
 
 
 env.hosts = ['100.24.205.80', '54.85.130.183']
-env.user = "ubuntu"
 
 
 def do_deploy(archive_path):
@@ -34,11 +33,22 @@ def do_deploy(archive_path):
         check = run("sudo rm /tmp/{}.tgz".format(file_name))
         check2 = run("sudo rm -rf {}".format(sym_link))
 
-        check3 = run("sudo cp -r /data/web_static/releases/{}/web_static/* /data/web_static/releases/".format(file_name))
-        check4 = run("sudo ln -sf /data/web_static/releases/ {}".format(sym_link))
+        check3 = run("sudo mv /data/web_static/releases/{}/web_static/* /data/web_static/releases/{}/".format(file_name, file_name))
+        cleanup = run ("sudo rm -rf /data/web_static/releases/{}/web_static".format(file_name))
+        check4 = run("sudo ln -sf /data/web_static/releases/{}/ {}".format(file_name, sym_link))
         check5 = run("sudo service nginx restart")
-        if upload.failed or result.failed or check.failed or check2.failed or check3.failed or check4.failed or check5.failed:
+        if (
+            upload.failed or
+            result.failed or
+            check.failed or
+            cleanup.failed or
+            check2.failed or
+            check3.failed or
+            check4.failed or
+            check5.failed
+        ):
             return False
+
         return True
     except Exception:
         return False

@@ -59,3 +59,7 @@ class FileStorage:
         if obj:
             if obj in self.__objects.values():
                 del self.__objects[(obj.__class__.__name__ + "." + obj.id)]
+
+    def close(self):
+        """Close app"""
+        self.reload()

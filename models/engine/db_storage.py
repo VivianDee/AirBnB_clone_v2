@@ -37,37 +37,15 @@ class DBStorage:
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """Query on the current database session (self.__session)
-
-        All objects depending of the class name (argument cls) if cls=None,
-        Query all types of objects (User, State, City, Amenity, Place & Review)
-
-        Args:
-            cls (any, optional): class name. Defaults to None.
-
-        Returns:
-            dict: objects in database
-        """
-        obj_dict = {}
-        if cls:
-            # get the class from the self._models dict
-            _class = self._models.get(cls)
-            query = self.__session.query(_class)
-
-            for model_obj in query:
-                key = "{}.{}".format(type(model_obj).__name__, model_obj.id)
-                obj_dict[key] = model_obj
-
-        else:
-            # using the values of the dict self.models to get all class objs.
-            # The values are class definitions
-            for _class in self._models.values():
-                for model_obj in self.__session.query(_class):
-                    key = "{}.{}".format(
-                        type(model_obj).__name__, model_obj.id)
-                    obj_dict[key] = model_obj
-
-        return obj_dict
+        """Shows all DB objects"""
+        new_dict = {}
+        for clss in self._models:
+            if cls is None or cls is self._models[clss] or cls is clss:
+                objs = self.__session.query(self._models[clss]).all()
+                for obj in objs:
+                    key = obj.__class__.__name__ + '.' + obj.id
+                    new_dict[key] = obj
+        return (new_dict) 
 
     def new(self, obj):
         """Adds a new object to the DB"""

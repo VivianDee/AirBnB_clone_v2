@@ -3,7 +3,6 @@
 from flask import Flask, render_template
 from markupsafe import escape
 from models.__init__ import storage
-from models.state import State
 
 app = Flask(__name__)
 

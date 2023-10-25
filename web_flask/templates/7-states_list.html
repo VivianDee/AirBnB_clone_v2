@@ -6,7 +6,7 @@
     <BODY>
         <H1>States</H1>
         <UL>
-            {% for obj in all_objs|sort(attribute='name') %} 
+            {% for obj in all_objs %} 
             <LI>{{ obj["id"] }}: <B>{{ obj["name"] }}</B></LI>
             {% endfor %}
         </UL>
